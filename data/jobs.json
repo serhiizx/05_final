@@ -1,0 +1,46 @@
+{
+  "JOB-BACKEND": {
+    "job_id": "JOB-BACKEND",
+    "title": "Backend Engineer",
+    "must_have": [
+      "Python",
+      "PostgreSQL",
+      "Docker"
+    ],
+    "nice_to_have": [
+      "Kubernetes",
+      "LangGraph"
+    ],
+    "min_years": 3,
+    "status": "open"
+  },
+  "JOB-ML": {
+    "job_id": "JOB-ML",
+    "title": "ML Engineer",
+    "must_have": [
+      "Python",
+      "PyTorch",
+      "MLflow"
+    ],
+    "nice_to_have": [
+      "Airflow",
+      "Kubernetes"
+    ],
+    "min_years": 4,
+    "status": "open"
+  },
+  "JOB-QA": {
+    "job_id": "JOB-QA",
+    "title": "QA Automation Engineer",
+    "must_have": [
+      "Python",
+      "Playwright"
+    ],
+    "nice_to_have": [
+      "Docker",
+      "CI/CD"
+    ],
+    "min_years": 2,
+    "status": "closed"
+  }
+}

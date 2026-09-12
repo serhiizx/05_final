@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.env
+chroma_db/
+agent_state.db*
+.deepeval*
+*.local*
+input/
+docs

@@ -1,0 +1,162 @@
+{
+  "benchmark_queries": [
+    "Оціни кандидата CAND-001 на вакансію JOB-BACKEND",
+    "Оціни кандидата CAND-002 на вакансію JOB-BACKEND",
+    "За скільки робочих днів ми маємо відповісти кандидату після скринінгу?"
+  ],
+  "lines_of_code": {
+    "LangGraph": {
+      "mas_langgraph.py": 740,
+      "hitl.py": 121,
+      "всього": 861
+    },
+    "CrewAI": {
+      "mas_crewai.py": 191,
+      "всього": 191
+    }
+  },
+  "qualitative": {
+    "Контроль над маршрутом": {
+      "LangGraph": 5,
+      "CrewAI": 2,
+      "підстава": "У LangGraph маршрут — conditional edge зі словником переходів, його видно в коді. У CrewAI Process.hierarchical делегує через менеджера, чий промпт нам не належить; у прогоні на CAND-001 менеджер викликав delegate_work_to_coworker тричі й залучив усіх трьох агентів замість одного."
+    },
+    "Надійність передачі даних між агентами": {
+      "LangGraph": 5,
+      "CrewAI": 2,
+      "підстава": "LangGraph бере бал зі структурованої події виклику інструмента (_score_from_events), тому текст агента на нього не впливає. У CrewAI результат переказується рядком: інструмент повернув 93/strong_match, а у фінальному звіті рішення стало in_progress. Довелося додати окремий рубіж authoritative_verdict."
+    },
+    "Зручність пошуку помилок": {
+      "LangGraph": 5,
+      "CrewAI": 3,
+      "підстава": "graph.aget_state(config) дає знімок стану на будь-якому кроці, кожен вузол — окремий запис у checkpointer. У CrewAI доступний лише verbose-вивід у консоль, і стан між задачами передається неявно через context."
+    },
+    "Швидкість першого прототипу": {
+      "LangGraph": 3,
+      "CrewAI": 5,
+      "підстава": "Три агенти й одна задача в CrewAI описуються декларативно. У LangGraph довелося заздалегідь спроєктувати MASState на 16 полів і розписати всі ребра."
+    },
+    "Підтвердження людиною": {
+      "LangGraph": 5,
+      "CrewAI": 2,
+      "підстава": "interrupt() зберігає стан у SQLite, і прогін відновлюється за тим самим thread_id навіть після перезапуску процесу (main.py --persistence). human_input=True в CrewAI дає блокуючий input() у консолі без збереження стану."
+    },
+    "Контроль над правами агентів": {
+      "LangGraph": 5,
+      "CrewAI": 3,
+      "підстава": "В обох allowlist фільтрує список інструментів, але в LangGraph є другий рубіж: guarded_tool викликає check_tool_call перед кожним виконанням. У CrewAI агент сам вирішує, коли викликати інструмент, і перехопити цей момент у коді оркестрації ніде."
+    }
+  },
+  "langfuse": {
+    "status": "ok",
+    "total_traces": 61,
+    "by_framework": {
+      "LangGraph": {
+        "traces": 21,
+        "cost_usd": 0.0281,
+        "links": [
+          "https://cloud.langfuse.com/project/cmty4tqhw0bnkad0dti3ydxiq/traces/4c89613a0c216b7fd276c68334661df9",
+          "https://cloud.langfuse.com/project/cmty4tqhw0bnkad0dti3ydxiq/traces/a889074828c56ae317c23ee87108194a"
+        ]
+      },
+      "CrewAI": {
+        "traces": 10,
+        "cost_usd": 0.0,
+        "links": [
+          "https://cloud.langfuse.com/project/cmty4tqhw0bnkad0dti3ydxiq/traces/7a02803fc7ebf546ea54f7e2194ff03c",
+          "https://cloud.langfuse.com/project/cmty4tqhw0bnkad0dti3ydxiq/traces/f02d9ae63f6ae5cd2b10fb7b6238c70f"
+        ]
+      },
+      "інше": {
+        "traces": 30,
+        "cost_usd": 0.0,
+        "links": [
+          "https://cloud.langfuse.com/project/cmty4tqhw0bnkad0dti3ydxiq/traces/1de105773edccc4b7e414fcf370eccef",
+          "https://cloud.langfuse.com/project/cmty4tqhw0bnkad0dti3ydxiq/traces/d020cd57a1f503f303daa3b624d9877e"
+        ]
+      }
+    },
+    "note": "поле usage на рівні трейсу Langfuse не заповнює, тому сумарні токени звідси недоступні; для CrewAI вартість нульова, бо OTEL-міст OpenInference її не передає"
+  },
+  "langgraph": {
+    "runs": [
+      {
+        "query": "Оціни кандидата CAND-001 на вакансію JOB-BACKEND",
+        "seconds": 22.46,
+        "routed_to": "screening",
+        "agents_used": [
+          "supervisor",
+          "screening"
+        ],
+        "tools_called": [
+          "fetch_resume",
+          "fetch_job_requirements",
+          "score_candidate"
+        ],
+        "llm_steps": 10,
+        "verdict": "strong_match",
+        "score": 93
+      },
+      {
+        "query": "Оціни кандидата CAND-002 на вакансію JOB-BACKEND",
+        "seconds": 22.73,
+        "routed_to": "screening",
+        "agents_used": [
+          "supervisor",
+          "screening"
+        ],
+        "tools_called": [
+          "fetch_resume",
+          "fetch_job_requirements",
+          "score_candidate"
+        ],
+        "llm_steps": 10,
+        "verdict": "reject",
+        "score": 5
+      },
+      {
+        "query": "За скільки робочих днів ми маємо відповісти кандидату після скринінгу?",
+        "seconds": 6.04,
+        "routed_to": "researcher",
+        "agents_used": [
+          "supervisor",
+          "researcher"
+        ],
+        "tools_called": [
+          "search_hr_kb"
+        ],
+        "llm_steps": 4,
+        "verdict": null,
+        "score": null
+      }
+    ],
+    "total_seconds": 51.23
+  },
+  "crewai": {
+    "runs": [
+      {
+        "query": "Оціни кандидата CAND-001 на вакансію JOB-BACKEND",
+        "seconds": 37.08,
+        "report_length": 2441,
+        "authoritative_block_needed": true
+      },
+      {
+        "query": "Оціни кандидата CAND-002 на вакансію JOB-BACKEND",
+        "seconds": 15.43,
+        "report_length": 1011,
+        "authoritative_block_needed": true
+      },
+      {
+        "query": "За скільки робочих днів ми маємо відповісти кандидату після скринінгу?",
+        "seconds": 9.25,
+        "report_length": 668,
+        "authoritative_block_needed": false
+      }
+    ],
+    "total_seconds": 61.76
+  },
+  "wall_clock": {
+    "LangGraph_seconds": 51.23,
+    "CrewAI_seconds": 61.76
+  }
+}
